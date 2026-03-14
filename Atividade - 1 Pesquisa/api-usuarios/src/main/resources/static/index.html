@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Teste de API - CRUD</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f2f5;
+  min-height: 100vh;
+  padding: 30px 16px;
+}
+
+.card {
+  background: #fff;
+  max-width: 750px;
+  margin: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  padding: 32px 36px;
+}
+
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 28px;
+  font-size: 1.8rem;
+}
+
+h2 {
+  color: #34495e;
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  border-left: 4px solid #3498db;
+  padding-left: 10px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.form-grid .full-width {
+  grid-column: 1 / -1;
+}
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52,152,219,0.15);
+}
+
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+button {
+  padding: 9px 20px;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+button:hover:not(:disabled) {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+#btnGet  { background: #2ecc71; color: white; }
+#btnPost { background: #3498db; color: white; }
+#btnPut  { background: #f39c12; color: white; }
+#btnDelete { background: #e74c3c; color: white; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+thead tr {
+  background: #3498db;
+  color: white;
+}
+
+thead th {
+  padding: 11px 14px;
+  text-align: left;
+  font-weight: bold;
+}
+
+tbody tr:nth-child(even) {
+  background: #f4f8fb;
+}
+
+tbody tr:hover {
+  background: #ddeeff;
+}
+
+tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #e0e0e0;
+  color: #333;
+}
+</style>
+
+
+<style>
+.pesquisa {
+  background: #fff;
+  max-width: 750px;
+  margin: auto auto 24px auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  padding: 32px 36px;
+}
+
+.pesquisa .titulo-atividade {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.pesquisa h1 {
+  font-size: 1.4rem;
+  color: #2c3e50;
+  margin-bottom: 6px;
+  text-align: left;
+}
+
+.pesquisa .subtitulo {
+  font-size: 1rem;
+  color: #3498db;
+  font-weight: bold;
+  margin-bottom: 24px;
+}
+
+.pergunta {
+  margin-bottom: 22px;
+}
+
+.pergunta h3 {
+  font-size: 0.97rem;
+  color: #2c3e50;
+  margin-bottom: 8px;
+  border-left: 4px solid #3498db;
+  padding-left: 10px;
+}
+
+.pergunta p {
+  font-size: 0.92rem;
+  color: #444;
+  line-height: 1.65;
+  margin-bottom: 6px;
+}
+
+.verbo-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  margin-top: 10px;
+}
+
+.verbo-table thead tr {
+  background: #3498db;
+  color: white;
+}
+
+.verbo-table thead th {
+  padding: 9px 12px;
+  text-align: left;
+}
+
+.verbo-table tbody tr:nth-child(even) {
+  background: #f4f8fb;
+}
+
+.verbo-table tbody td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #e0e0e0;
+  color: #333;
+}
+
+.tag-crud {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.82rem;
+  color: white;
+}
+.tag-get    { background: #2ecc71; }
+.tag-post   { background: #3498db; }
+.tag-put    { background: #f39c12; }
+.tag-delete { background: #e74c3c; }
+</style>
+
+</head>
+
+<body>
+
+<div class="pesquisa">
+  <p class="titulo-atividade">Bases da Internet — 1º Semestre &nbsp;|&nbsp; Atividade 1 – Pesquisa</p>
+  <h1>Verbos HTTP, CRUD, REST e RESTful</h1>
+  <p class="subtitulo">Nome: Leonardo Gabriel Russo dos Santos &nbsp;|&nbsp; Professor: Sandro</p>
+
+  <div class="pergunta">
+    <h3>1. O que são verbos HTTP e qual a relação com o acrônimo CRUD?</h3>
+    <p>
+      Os verbos HTTP são métodos de requisição que indicam a ação que um cliente (por meio de um navegador ou aplicação) deseja realizar em um servidor para manipular recursos, como páginas, imagens ou dados. Esses métodos funcionam como "palavras de ação" da internet, permitindo uma comunicação padronizada entre sistemas. Eles são definidos pelo protocolo HTTP/1.1, especificado na RFC 7231.
+    </p>
+    <p>
+      O acrônimo <strong>CRUD</strong> representa as quatro operações básicas de gerenciamento de dados em um sistema: <strong>C</strong>reate (Criar), <strong>R</strong>ead (Ler), <strong>U</strong>pdate (Atualizar) e <strong>D</strong>elete (Excluir). Em APIs e serviços web, os verbos HTTP normalmente são utilizados para representar essas operações.
+    </p>
+  </div>
+
+  <div class="pergunta">
+    <h3>2. Quais são os verbos mais utilizados e quais são suas funções?</h3>
+    <p>Os verbos HTTP mais utilizados são GET, POST, PUT, PATCH e DELETE. Eles são utilizados para indicar qual ação será realizada sobre um recurso em um servidor.</p>
+    <p>A tabela abaixo mostra a relação entre as operações CRUD e os métodos HTTP utilizados para cada uma delas.</p>
+    <table class="verbo-table">
+      <thead>
+        <tr><th>Operação CRUD</th><th>Método HTTP</th><th>Função</th><th>Exemplo</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Create (Criar)</td>
+          <td><span class="tag-crud tag-post">POST</span></td>
+          <td>Cria um novo recurso no servidor</td>
+          <td><code>POST /usuarios</code></td>
+        </tr>
+        <tr>
+          <td>Read (Ler)</td>
+          <td><span class="tag-crud tag-get">GET</span></td>
+          <td>Consulta ou obtém dados do servidor</td>
+          <td><code>GET /usuarios</code></td>
+        </tr>
+        <tr>
+          <td>Update (Atualizar)</td>
+          <td style="white-space:nowrap"><span class="tag-crud tag-put">PUT</span> / <span class="tag-crud" style="background:#9b59b6">PATCH</span></td>
+          <td>Atualiza um recurso existente</td>
+          <td><code>PUT /usuarios/{cpf}</code></td>
+        </tr>
+        <tr>
+          <td>Delete (Excluir)</td>
+          <td><span class="tag-crud tag-delete">DELETE</span></td>
+          <td>Remove um recurso do servidor</td>
+          <td><code>DELETE /usuarios/{cpf}</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:18px"><strong>Outros métodos auxiliares</strong></p>
+    <p>Além dos métodos principais utilizados no CRUD, existem outros métodos HTTP que possuem finalidades mais específicas:</p>
+    <ul style="margin-top:10px; padding-left:20px; line-height:1.8; font-size:0.92rem; color:#444">
+      <li><strong>HEAD:</strong> Similar ao GET, mas retorna apenas os cabeçalhos da resposta, sem o corpo do conteúdo. É útil para verificar informações sobre um recurso antes de fazer o download completo.</li>
+      <li><strong>OPTIONS:</strong> Retorna quais métodos HTTP são permitidos para uma determinada URL. É muito utilizado em políticas de segurança como CORS.</li>
+      <li><strong>TRACE:</strong> Utilizado principalmente para testes de diagnóstico, permitindo verificar o caminho que a requisição percorreu até chegar ao servidor.</li>
+    </ul>
+  </div>
+
+  <div class="pergunta">
+    <h3>3. Qual a diferença entre REST e RESTful?</h3>
+    <p>
+      <strong>REST</strong> (Representational State Transfer) é um conjunto de princípios arquiteturais utilizados para criar serviços web. Esses princípios foram definidos por Roy Fielding em sua tese de doutorado.
+    </p>
+    <p style="margin-top:10px">Para que uma API seja considerada <strong>RESTful</strong>, ela deve seguir alguns princípios, como:</p>
+    <ul style="margin-top:10px; padding-left:20px; line-height:1.8; font-size:0.92rem; color:#444">
+      <li><strong>Cliente-Servidor:</strong> separa a interface do cliente da lógica do servidor.</li>
+      <li><strong>Stateless (sem estado):</strong> cada requisição deve conter todas as informações necessárias para ser compreendida.</li>
+      <li><strong>Cacheável:</strong> as respostas podem ser armazenadas em cache para melhorar o desempenho.</li>
+      <li><strong>Interface uniforme:</strong> define uma forma padronizada de comunicação utilizando URLs, métodos HTTP e formatos como JSON ou XML.</li>
+      <li><strong>Sistema em camadas:</strong> permite a utilização de intermediários como proxies e balanceadores de carga.</li>
+      <li><strong>Código sob demanda (opcional):</strong> o servidor pode enviar código executável para o cliente, como scripts.</li>
+    </ul>
+    <p style="margin-top:12px">
+      De forma resumida, <strong>REST</strong> é o modelo ou conjunto de princípios, enquanto <strong>RESTful</strong> é o termo utilizado para descrever APIs que realmente aplicam esses princípios na prática.
+      A API de usuários desenvolvida neste projeto é um exemplo de API RESTful: ela utiliza os verbos HTTP corretamente (GET, POST, PUT, DELETE), identifica cada recurso por uma URL única (<code>/usuarios/{cpf}</code>), não armazena estado entre as requisições e retorna os dados no formato JSON.
+    </p>
+
+    <p style="margin-top:12px">
+      Para demonstrar na prática o funcionamento de uma API RESTful, foi desenvolvida uma aplicação completa utilizando as seguintes tecnologias:
+    </p>
+    <ul style="margin-top:10px; padding-left:20px; line-height:1.8; font-size:0.92rem; color:#444">
+      <li><strong>Java 21:</strong> linguagem de programação utilizada no desenvolvimento do back-end.</li>
+      <li><strong>Spring Boot 4:</strong> framework que facilita a criação de aplicações Java, fornecendo configuração automática e servidor embutido.</li>
+      <li><strong>Spring Data JPA:</strong> responsável pela comunicação com o banco de dados, mapeando os objetos Java para tabelas.</li>
+      <li><strong>H2 Database:</strong> banco de dados relacional em memória, utilizado para armazenar os dados dos usuários durante a execução da aplicação.</li>
+      <li><strong>Springdoc OpenAPI (Swagger UI):</strong> ferramenta que gera automaticamente a documentação interativa da API.</li>
+      <li><strong>HTML, CSS e JavaScript:</strong> utilizados para criar a interface web que permite testar os endpoints da API diretamente pelo navegador.</li>
+    </ul>
+  </div>
+
+  <div class="pergunta">
+    <h3>Como o protocolo HTTP funciona na aplicação?</h3>
+    <p>
+      O protocolo HTTP (HyperText Transfer Protocol) é o protocolo de comunicação utilizado entre o cliente (navegador) e o servidor da aplicação. Toda interação na API segue o modelo <strong>requisição → resposta</strong>: o cliente envia uma requisição HTTP com um verbo, uma URL e opcionalmente um corpo em JSON, e o servidor processa e devolve uma resposta com um código de status e os dados solicitados.
+    </p>
+    <p style="margin-top:10px">Na aplicação desenvolvida, o fluxo funciona da seguinte forma:</p>
+    <table class="verbo-table" style="margin-top:10px">
+      <thead>
+        <tr><th>Ação no navegador</th><th>Requisição HTTP enviada</th><th>O que o servidor faz</th><th>Resposta</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Clicar em GET</td>
+          <td><code>GET /usuarios</code></td>
+          <td>Busca todos os usuários no banco de dados</td>
+          <td><code>200 OK</code> + lista em JSON</td>
+        </tr>
+        <tr>
+          <td>Clicar em POST</td>
+          <td><code>POST /usuarios</code> + corpo JSON</td>
+          <td>Valida os dados e salva o novo usuário</td>
+          <td><code>201 Created</code> + usuário criado</td>
+        </tr>
+        <tr>
+          <td>Clicar em PUT</td>
+          <td><code>PUT /usuarios/{cpf}</code> + corpo JSON</td>
+          <td>Localiza o usuário pelo CPF e atualiza os dados</td>
+          <td><code>200 OK</code> + usuário atualizado</td>
+        </tr>
+        <tr>
+          <td>Clicar em DELETE</td>
+          <td><code>DELETE /usuarios/{cpf}</code></td>
+          <td>Localiza o usuário pelo CPF e remove do banco</td>
+          <td><code>204 No Content</code></td>
+        </tr>
+        <tr>
+          <td>CPF não encontrado</td>
+          <td>GET / PUT / DELETE com CPF inexistente</td>
+          <td>Lança exceção de usuário não encontrado</td>
+          <td><code>404 Not Found</code> + mensagem de erro</td>
+        </tr>
+        <tr>
+          <td>CPF já cadastrado</td>
+          <td><code>POST /usuarios</code> com CPF duplicado</td>
+          <td>Lança exceção de CPF já existente</td>
+          <td><code>409 Conflict</code> + mensagem de erro</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px">
+      Os <strong>códigos de status HTTP</strong> são parte fundamental do protocolo: eles indicam ao cliente o resultado da requisição de forma padronizada. Códigos <strong>2xx</strong> indicam sucesso, <strong>4xx</strong> indicam erros causados pelo cliente (dados inválidos, recurso não encontrado) e <strong>5xx</strong> indicam erros internos do servidor.
+    </p>
+  </div>
+</div>
+
+<div class="card">
+
+<h1>Teste da API de Usuários</h1>
+
+<h2>Dados do usuário</h2>
+
+<div class="form-grid">
+  <div>
+    <label for="cpf">CPF</label>
+    <input id="cpf" placeholder="Ex: 123.456.789-01" autofocus>
+  </div>
+
+  <div>
+    <label for="nome">Nome</label>
+    <input id="nome" placeholder="Ex: Leonardo Gabriel">
+  </div>
+
+  <div class="full-width">
+    <label for="email">Email</label>
+    <input id="email" placeholder="Ex: leonardo@example.com">
+  </div>
+</div>
+
+<div class="btn-group">
+  <button id="btnGet" onclick="getUsuarios()" disabled>GET</button>
+  <button id="btnPost" onclick="postUsuario()" disabled>POST</button>
+  <button id="btnPut" onclick="putUsuario()" disabled>PUT</button>
+  <button id="btnDelete" onclick="deleteUsuario()" disabled>DELETE</button>
+</div>
+
+<h2>Lista de usuários</h2>
+
+<table id="tabela">
+<thead>
+<tr>
+<th>ID</th>
+<th>Nome</th>
+<th>Email</th>
+<th>CPF</th>
+</tr>
+</thead>
+<tbody id="lista"></tbody>
+</table>
+
+</div>
+
+<script>
+
+const API = "/usuarios"
+
+function validarCampos() {
+  const cpf = document.getElementById("cpf").value.replace(/\D/g, '')
+  const nome = document.getElementById("nome").value.trim()
+  const email = document.getElementById("email").value.trim()
+  
+  // GET não precisa de nenhum campo
+  document.getElementById("btnGet").disabled = false
+  
+  // POST precisa de todos os campos
+  const postValido = cpf.length === 11 && nome && email
+  document.getElementById("btnPost").disabled = !postValido
+  
+  // PUT precisa de todos os campos
+  const putValido = cpf.length === 11 && nome && email
+  document.getElementById("btnPut").disabled = !putValido
+  
+  // DELETE precisa apenas de CPF
+  const deleteValido = cpf.length === 11
+  document.getElementById("btnDelete").disabled = !deleteValido
+}
+
+document.getElementById("cpf").addEventListener("input", validarCampos)
+document.getElementById("nome").addEventListener("input", validarCampos)
+document.getElementById("email").addEventListener("input", validarCampos)
+
+function formatarCPF(cpf) {
+  cpf = cpf.replace(/\D/g, '')
+  
+  if (cpf.length > 11) {
+    cpf = cpf.substring(0, 11)
+  }
+  
+  if (cpf.length <= 3) {
+    return cpf
+  } else if (cpf.length <= 6) {
+    return cpf.substring(0, 3) + '.' + cpf.substring(3)
+  } else if (cpf.length <= 9) {
+    return cpf.substring(0, 3) + '.' + cpf.substring(3, 6) + '.' + cpf.substring(6)
+  } else {
+    return cpf.substring(0, 3) + '.' + cpf.substring(3, 6) + '.' + cpf.substring(6, 9) + '-' + cpf.substring(9)
+  }
+}
+
+function exibirCPF(cpf){
+  return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,
+  "$1.$2.$3-$4")
+}
+
+document.getElementById("cpf").addEventListener("input", function() {
+  this.value = formatarCPF(this.value)
+  validarCampos()
+})
+
+function getUsuarios(){
+
+fetch(API)
+.then(r => {
+  if(!r.ok){
+    throw new Error("Erro ao buscar usuários")
+  }
+  return r.json()
+})
+.then(data => {
+
+alert("GET executado: buscando usuários cadastrados")
+
+const lista = document.getElementById("lista")
+lista.innerHTML=""
+
+if(data.length === 0){
+const li = document.createElement("tr")
+li.innerHTML = "<td colspan='4'>Nenhum usuário cadastrado</td>"
+lista.appendChild(li)
+return
+}
+
+data.forEach(u =>{
+
+const li = document.createElement("tr")
+
+li.innerHTML = `
+<td>${u.id}</td>
+<td>${u.nome}</td>
+<td>${u.email}</td>
+<td>${exibirCPF(u.cpf)}</td>
+`
+
+lista.appendChild(li)
+
+})
+
+})
+.catch(error => {
+  alert(error.message)
+})
+
+}
+
+function postUsuario(){
+
+const cpf = document.getElementById("cpf").value.replace(/\D/g, '')
+const nome = document.getElementById("nome").value
+const email = document.getElementById("email").value
+
+fetch(API,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+nome:nome,
+email:email,
+cpf:cpf
+})
+})
+.then(response => {
+if (!response.ok) {
+return response.json().then(error => {
+throw new Error(error.mensagem);
+});
+}
+return response.json();
+})
+.then(data => {
+alert("POST executado: usuário criado")
+
+document.getElementById("cpf").value=""
+document.getElementById("nome").value=""
+document.getElementById("email").value=""
+
+getUsuarios()
+validarCampos()
+})
+.catch(error => {
+alert("Erro: " + error.message)
+})
+
+}
+
+function putUsuario(){
+
+const cpf = document.getElementById("cpf").value.replace(/\D/g, '')
+const nome = document.getElementById("nome").value
+const email = document.getElementById("email").value
+
+fetch(API+"/"+cpf,{
+method:"PUT",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+nome:nome,
+email:email,
+cpf:cpf
+})
+})
+.then(response => {
+if (!response.ok) {
+return response.json().then(error => {
+throw new Error(error.mensagem);
+});
+}
+return response.json();
+})
+.then(() => {
+alert("PUT executado: usuário atualizado")
+
+document.getElementById("cpf").value=""
+document.getElementById("nome").value=""
+document.getElementById("email").value=""
+
+getUsuarios()
+validarCampos()
+})
+.catch(error => {
+alert("Erro: " + error.message)
+})
+
+}
+
+function deleteUsuario(){
+
+const cpf = document.getElementById("cpf").value.replace(/\D/g, '')
+
+if(!confirm("Tem certeza que deseja deletar este usuário?")){
+  return
+}
+
+fetch(API+"/"+cpf,{
+method:"DELETE"
+})
+.then(response => {
+if (!response.ok) {
+return response.json().then(error => {
+throw new Error(error.mensagem);
+});
+}
+})
+.then(() => {
+alert("DELETE executado: usuário removido")
+
+document.getElementById("cpf").value=""
+document.getElementById("nome").value=""
+document.getElementById("email").value=""
+
+getUsuarios()
+validarCampos()
+})
+.catch(error => {
+alert("Erro: " + error.message)
+})
+
+}
+
+getUsuarios()
+
+</script>
+
+</body>
+</html>
