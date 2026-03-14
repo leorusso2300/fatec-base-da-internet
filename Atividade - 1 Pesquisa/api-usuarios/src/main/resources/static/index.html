@@ -146,7 +146,7 @@ tbody td {
 .pesquisa {
   background: #fff;
   max-width: 750px;
-  margin: auto auto 24px auto;
+  margin: 24px auto auto auto;
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.12);
   padding: 32px 36px;
@@ -236,10 +236,60 @@ tbody td {
 
 <body>
 
+<div class="card">
+
+<p class="titulo-atividade" style="text-align:center">Bases da Internet — 1º Semestre &nbsp;|&nbsp; Atividade 1 – Pesquisa</p>
+<h1>Teste da API de Usuários</h1>
+<p style="text-align:center; font-size:0.9rem; color:#555; margin-bottom:16px">
+  Para demonstrar na prática o funcionamento de uma API RESTful, foi desenvolvida uma aplicação completa utilizando:
+  <strong>Java 21</strong>, <strong>Spring Boot 4</strong>, <strong>Spring Data JPA</strong>,
+  <strong>H2 Database</strong>, <strong>Springdoc OpenAPI</strong> e <strong>HTML/CSS/JS</strong>.
+</p>
+<hr style="border:none; border-top:1px solid #e0e0e0; margin-bottom:24px">
+
+<h2>Dados do usuário</h2>
+
+<div class="form-grid">
+  <div>
+    <label for="cpf">CPF</label>
+    <input id="cpf" placeholder="Ex: 123.456.789-01" autofocus>
+  </div>
+
+  <div>
+    <label for="nome">Nome</label>
+    <input id="nome" placeholder="Ex: Leonardo Gabriel">
+  </div>
+
+  <div class="full-width">
+    <label for="email">Email</label>
+    <input id="email" placeholder="Ex: leonardo@example.com">
+  </div>
+</div>
+
+<div class="btn-group">
+  <button id="btnGet" onclick="getUsuarios()" disabled>GET</button>
+  <button id="btnPost" onclick="postUsuario()" disabled>POST</button>
+  <button id="btnPut" onclick="putUsuario()" disabled>PUT</button>
+  <button id="btnDelete" onclick="deleteUsuario()" disabled>DELETE</button>
+</div>
+
+<h2>Lista de usuários</h2>
+
+<table id="tabela">
+<thead>
+<tr>
+<th>ID</th>
+<th>Nome</th>
+<th>Email</th>
+<th>CPF</th>
+</tr>
+</thead>
+<tbody id="lista"></tbody>
+</table>
+
+</div>
+
 <div class="pesquisa">
-  <p class="titulo-atividade">Bases da Internet — 1º Semestre &nbsp;|&nbsp; Atividade 1 – Pesquisa</p>
-  <h1>Verbos HTTP, CRUD, REST e RESTful</h1>
-  <p class="subtitulo">Nome: Leonardo Gabriel Russo dos Santos &nbsp;|&nbsp; Professor: Sandro</p>
 
   <div class="pergunta">
     <h3>1. O que são verbos HTTP e qual a relação com o acrônimo CRUD?</h3>
@@ -315,17 +365,6 @@ tbody td {
       A API de usuários desenvolvida neste projeto é um exemplo de API RESTful: ela utiliza os verbos HTTP corretamente (GET, POST, PUT, DELETE), identifica cada recurso por uma URL única (<code>/usuarios/{cpf}</code>), não armazena estado entre as requisições e retorna os dados no formato JSON.
     </p>
 
-    <p style="margin-top:12px">
-      Para demonstrar na prática o funcionamento de uma API RESTful, foi desenvolvida uma aplicação completa utilizando as seguintes tecnologias:
-    </p>
-    <ul style="margin-top:10px; padding-left:20px; line-height:1.8; font-size:0.92rem; color:#444">
-      <li><strong>Java 21:</strong> linguagem de programação utilizada no desenvolvimento do back-end.</li>
-      <li><strong>Spring Boot 4:</strong> framework que facilita a criação de aplicações Java, fornecendo configuração automática e servidor embutido.</li>
-      <li><strong>Spring Data JPA:</strong> responsável pela comunicação com o banco de dados, mapeando os objetos Java para tabelas.</li>
-      <li><strong>H2 Database:</strong> banco de dados relacional em memória, utilizado para armazenar os dados dos usuários durante a execução da aplicação.</li>
-      <li><strong>Springdoc OpenAPI (Swagger UI):</strong> ferramenta que gera automaticamente a documentação interativa da API.</li>
-      <li><strong>HTML, CSS e JavaScript:</strong> utilizados para criar a interface web que permite testar os endpoints da API diretamente pelo navegador.</li>
-    </ul>
   </div>
 
   <div class="pergunta">
@@ -381,52 +420,6 @@ tbody td {
       Os <strong>códigos de status HTTP</strong> são parte fundamental do protocolo: eles indicam ao cliente o resultado da requisição de forma padronizada. Códigos <strong>2xx</strong> indicam sucesso, <strong>4xx</strong> indicam erros causados pelo cliente (dados inválidos, recurso não encontrado) e <strong>5xx</strong> indicam erros internos do servidor.
     </p>
   </div>
-</div>
-
-<div class="card">
-
-<h1>Teste da API de Usuários</h1>
-
-<h2>Dados do usuário</h2>
-
-<div class="form-grid">
-  <div>
-    <label for="cpf">CPF</label>
-    <input id="cpf" placeholder="Ex: 123.456.789-01" autofocus>
-  </div>
-
-  <div>
-    <label for="nome">Nome</label>
-    <input id="nome" placeholder="Ex: Leonardo Gabriel">
-  </div>
-
-  <div class="full-width">
-    <label for="email">Email</label>
-    <input id="email" placeholder="Ex: leonardo@example.com">
-  </div>
-</div>
-
-<div class="btn-group">
-  <button id="btnGet" onclick="getUsuarios()" disabled>GET</button>
-  <button id="btnPost" onclick="postUsuario()" disabled>POST</button>
-  <button id="btnPut" onclick="putUsuario()" disabled>PUT</button>
-  <button id="btnDelete" onclick="deleteUsuario()" disabled>DELETE</button>
-</div>
-
-<h2>Lista de usuários</h2>
-
-<table id="tabela">
-<thead>
-<tr>
-<th>ID</th>
-<th>Nome</th>
-<th>Email</th>
-<th>CPF</th>
-</tr>
-</thead>
-<tbody id="lista"></tbody>
-</table>
-
 </div>
 
 <script>
